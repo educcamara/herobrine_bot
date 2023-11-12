@@ -33,7 +33,8 @@ async def ping(ctx):
 @bot.command(name='add')
 async def add(ctx, category):
     if category not in categories:
-        await ctx.send(f"Não existe a categoria '{category}'")
+        await ctx.send(f"""Não existe a categoria '{category}'
+                       Para saber como funciona o comando `add`, digite `>help add`""")
         return
     
     return
