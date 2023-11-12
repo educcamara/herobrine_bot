@@ -10,11 +10,11 @@ bot = commands.Bot(command_prefix=">", intents=intents)
 
 
 categories = {
-    'estrutura': None,
-    'bioma': None,
-    'paisagem': None,
-    'caverna': None,
-    'outro': None
+    'estrutura': ['nome', 'coordenadas'],
+    'bioma': ['nome', 'coordenadas'],
+    'paisagem': ['nome', 'coordenadas', 'descrição'],
+    'caverna': ['nome', 'coordenadas', 'tamanho', ],
+    'outro': ['nome', 'coordenadas', 'descrição']
 }
 
 
@@ -32,6 +32,10 @@ async def ping(ctx):
 
 @bot.command(name='add')
 async def add(ctx, category):
+    if category not in categories:
+        await ctx.send(f"Não existe a categoria '{category}'")
+        return
+    
     return
 
 
