@@ -28,7 +28,9 @@ class SQLManager:
         self._create_tables()
 
     def _check_table(self, table_name):
-        self.cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name=?", (table_name,))
+        self.cursor.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name=?",
+            (table_name,))
         return self.cursor.fetchone()
 
     def _create_tables(self):
