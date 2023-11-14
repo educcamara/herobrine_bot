@@ -2,25 +2,11 @@ import os
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
-from inputmanager import *
 
 intents = discord.Intents.default()
 intents.message_content = True
 
 bot = commands.Bot(command_prefix=">", intents=intents)
-
-
-categories = {
-    "estrutura": ["nome", "coordenadas"],
-    "bioma": ["nome", "coordenadas"],
-    "paisagem": ["nome", "coordenadas", "descrição"],
-    "caverna": [
-        "nome",
-        "coordenadas",
-        "tamanho",
-    ],
-    "outro": ["nome", "coordenadas", "descrição"],
-}
 
 
 @bot.event
@@ -40,7 +26,7 @@ async def add(ctx, category):
     if category not in categories:
         await ctx.send(
             f"""Não existe a categoria '{category}'
-                       Para saber como funciona o comando `add`, digite `>help add`"""
+                Para saber como funciona o comando `add`, digite `>help add`"""
         )
         print("command 'add' failed by INVALID_CATEGORY")
         return

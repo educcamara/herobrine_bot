@@ -97,7 +97,7 @@ class Structure(Location):
 
     def __init__(self, name, coords, explored):
         super().__init__(name, coords)
-        self.category = 'Estrutura'
+        self.category = 'Structure'
         self.explored = explored
 
     def __repr__(self):
@@ -140,7 +140,7 @@ class Cave(Location):
 
     def __init__(self, name, coords, size, explored):
         super().__init__(name, coords)
-        self.category = 'Caverna'
+        self.category = 'Cave'
         self.size = size
         self.explored = explored
 
@@ -162,7 +162,7 @@ class Landscape(Location):
     """
     def __init__(self, name, coords, beauty, desc):
         super().__init__(name, coords)
-        self.category = 'Paisagem'
+        self.category = 'Landscape'
         self.beauty = beauty
         self.desc = desc
 
@@ -183,7 +183,7 @@ class Other(Location):
     """
     def __init__(self, name, coords, desc):
         super().__init__(name, coords)
-        self.category = 'Outro'
+        self.category = 'Other'
         self.desc = desc
 
     def __repr__(self):
