@@ -76,6 +76,7 @@ class Location:
         return {
             'name': self.name,
             'coords': self.coords,
+            'category': self.category,
             'size': self.size,
             'beauty': self.beauty,
             'explored': self.explored,
