@@ -1,13 +1,16 @@
 import os
 import discord
+from discord.ui import Button, View
 from discord.ext import commands
 from dotenv import load_dotenv
+from locations import *
+from dbmanager import *
 
 intents = discord.Intents.default()
 intents.message_content = True
 
 bot = commands.Bot(command_prefix=">", intents=intents)
-
+db = LocationsManager()
 
 @bot.event
 async def on_ready():
@@ -21,25 +24,54 @@ async def ping(ctx):
     await ctx.send(f"Pong com {latency}ms")
 
 
-@bot.command(name="add")
-async def add(ctx, category):
-    if category not in categories:
-        await ctx.send(
-            f"""Não existe a categoria '{category}'
-                Para saber como funciona o comando `add`, digite `>help add`"""
-        )
-        print("command 'add' failed by INVALID_CATEGORY")
+@bot.command(name="locs")
+async def locs(ctx, category):
+    print(f"{ctx.author} used the locs command")
+    if category not in categories.keys():
+        await ctx.message.delete()
+        await ctx.send("Categoria inválida", delete_after=10)
         return
 
-    def check(usr):
-        return usr.author == ctx.author and usr.channel == ctx.channel
+    locs_ = db.get_locations(categories[category])
+    if not locs_:
+        await ctx.message.delete()
+        await ctx.send("Nenhuma localização encontrada", delete_after=10)
+        return
 
-    await ctx.send(f"Digite o nome da localização de categoria **{category}**")
-    msg = await bot.wait_for("message", check=check)
-    name = msg.content
-    await ctx.send(f'Digite as coordenadas de "{name}"')
+    msg = ""
+    for loc in locs_:
+        loc_ = str(*loc)
+        msg += f"{loc_}\n"
 
-    return
+    await ctx.send(msg)
+
+
+@bot.command(name="add")
+async def add(ctx, category):
+    print(f"{ctx.author} used the add command")
+    if category not in categories.keys():
+        await ctx.message.delete()
+        await ctx.send("Categoria inválida", delete_after=10)
+        return
+
+
+
+
+@bot.command(name="ephemeral")
+async def ephemeral(ctx):
+    print(f"{ctx.author} used the ephemeral command")
+    button = Button(label="Cadu", style=discord.ButtonStyle.primary)
+
+    view = View()
+    view.add_item(button)
+    msg = await ctx.send("Sarve", view=view)
+
+    async def callback(interaction):
+        await interaction.response.send_message(content="Salve senhor", ephemeral=True)
+        await ctx.message.delete()
+        await msg.delete()
+
+    button.callback = callback
 
 
 load_dotenv()

@@ -1,22 +1,3 @@
-categories = {
-    'estrutura': {'name': 'Estruturas', 
-                    'args': ['nome', 'coordenadas', 'explorada'], 
-                    'str_args': '(nome, coordenadas, explorada) VALUES (?, ?, ?)'},
-    'bioma': {'name': 'Biomas', 
-                'args': ['nome', 'coordenadas', 'descricao'],
-                'str_args': '(nome, coordenadas, descricao) VALUES (?, ?, ?)'},
-    'caverna': {'name': 'Cavernas',
-                'args': ['nome', 'coordenadas', 'tamanho', 'explorada'],
-                'str_args': '(nome, coordenadas, tamanho, explorada) VALUES (?, ?, ?, ?)'},
-    'paisagem': {'name': 'Paisagens',
-                    'args': ['nome', 'coordenadas', 'beleza', 'descricao'],
-                    'str_args': '(nome, coordenadas, beleza, descricao) VALUES (?, ?, ?, ?)'},
-    'outro': {'name': 'Outros',
-                'args': ['nome', 'coordenadas', 'descricao'],
-                'str_args': '(nome, coordenadas, descricao) VALUES (?, ?, ?)'}
-}
-
-
 class Location:
     """
     A class representing a location in the game.
@@ -63,7 +44,7 @@ class Location:
         else:
             print(f"Invalid coords for {self.name}")
             return None
-        
+
         return x, y, z
 
     def __repr__(self):
@@ -82,7 +63,7 @@ class Location:
             'explored': self.explored,
             'desc': self.desc
         }
-  
+
 
 class Structure(Location):
     """
@@ -103,14 +84,14 @@ class Structure(Location):
 
     def __repr__(self):
         return f"Structure '{self.name}' at {self.coords}"
- 
+
 
 class Biome(Location):
     """
     A class representing a biome in the game world.
 
     ### Attributes:
-    
+
     - name (str): the name of the biome
     - coords (tuple): the coordinates of the biome
     - category (str): the category of the location (always 'Bioma' for biomes)
@@ -161,6 +142,7 @@ class Landscape(Location):
     - beauty (int): The beauty of the landscape (convention is 1-10).
     - desc (str): A description of the landscape.
     """
+
     def __init__(self, name, coords, beauty, desc):
         super().__init__(name, coords)
         self.category = 'Landscape'
@@ -182,6 +164,7 @@ class Other(Location):
     - category (str): The category of the location (always 'Outro' for other locations).
     - desc (str): A description of the location.
     """
+
     def __init__(self, name, coords, desc):
         super().__init__(name, coords)
         self.category = 'Other'
@@ -189,3 +172,12 @@ class Other(Location):
 
     def __repr__(self):
         return f"Other '{self.name}' at {self.coords}"
+
+
+categories = {
+    'estrutura': {'name': 'Structure', 'class': Structure},
+    'bioma': {'name': 'Biome', 'class': Biome},
+    'caverna': {'name': 'Cave', 'class': Cave},
+    'paisagem': {'name': 'Landscape', 'class': Landscape},
+    'outro': {'name': 'Other', 'class': Other}
+}
