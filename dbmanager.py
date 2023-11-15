@@ -83,18 +83,37 @@ class LocationsManager:
         
         return keys, new_dct
 
-    def add_location(self, location_dict):
-        table_name = location_dict['category'] + 's'
-        keys, location_dict = self._filter_dict(location_dict)
-        keys_str = '(' + ', '.join(keys) + ')'
-        values = tuple(location_dict.values())
-        values_str = '(' + ', '.join(['?'] * len(values)) + ')'
+    def add_location(self, location_dict) -> bool:
+        try:
+            table_name = location_dict['category'] + 's'
+            keys, location_dict = self._filter_dict(location_dict)
+            keys_str = '(' + ', '.join(keys) + ')'
+            values = tuple(location_dict.values())
+            values_str = '(' + ', '.join(['?'] * len(values)) + ')'
 
-        self.cur.execute(f"INSERT INTO {table_name} {keys_str} VALUES {values_str}", values)
-        print(f"Added location '{location_dict['name']}' to {table_name}")
+            self.cur.execute(f"INSERT INTO {table_name} {keys_str} VALUES {values_str}", values)
 
-        self.conn.commit()
+            self.conn.commit()
+            print(f"Added location '{location_dict['name']}' to {table_name}")
+            return True
+        except Exception as e:
+            print(f"Failed to add location '{location_dict['name']}' to {table_name}")
+            print(e)
+            return False
 
+    def edit_location(self, category, name, key, value) -> bool:
+        try:
+            table_name = category + 's'
+
+            self.cur.execute(f"UPDATE {table_name} SET {key}=? WHERE name=?", (value, name))
+
+            self.conn.commit()
+            print(f"Edited location '{name}' in {table_name}: {key}={value}")
+            return True
+        except Exception as e:
+            print(f"Failed to edit location '{name}' in {table_name}: {key}={value}")
+            print(e)
+            return False
     
     def get_locations(self, category):
         self.cur.execute(f"SELECT * FROM {category}s")
@@ -103,5 +122,3 @@ class LocationsManager:
     def get_location(self, category, name):
         self.cur.execute(f"SELECT * FROM {category}s WHERE name=?", (name,))
         return self.cur.fetchone()
-        
-
