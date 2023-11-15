@@ -1,6 +1,7 @@
 import sqlite3
 
 class LocationsManager:
+    """Manages the locations database."""
     def __init__(self):
         self.conn = sqlite3.connect('locations.db')
         self.cur = self.conn.cursor()
@@ -84,6 +85,7 @@ class LocationsManager:
         return keys, new_dct
 
     def add_location(self, location_dict) -> bool:
+        """Adds a location to the database."""
         try:
             table_name = location_dict['category'] + 's'
             keys, location_dict = self._filter_dict(location_dict)
@@ -100,25 +102,50 @@ class LocationsManager:
             print(f"Failed to add location '{location_dict['name']}' to {table_name}")
             print(e)
             return False
+        
+    def _count_same_name(self, category, name):
+        self.cur.execute(f"SELECT COUNT(*) FROM {category}s WHERE name=?", (name,))
+        return self.cur.fetchone()[0]
 
-    def edit_location(self, category, name, key, value) -> bool:
+    def edit_location(self, category, key, value, id_=None, name=None,) -> int:
+        """Edits a location in the database."""
         try:
-            table_name = category + 's'
-
-            self.cur.execute(f"UPDATE {table_name} SET {key}=? WHERE name=?", (value, name))
+            if id_:
+                self.cur.execute(f"UPDATE {category}s SET {key}=? WHERE id=?", (value, id_))
+            elif name:
+                if self._count_same_name(category, name) == 0:
+                    raise ValueError(f"No location with name '{name}' in {category}s")
+                elif self._count_same_name(category, name) > 1:
+                    print(f"Failed to edit location '{name}' in {category}s: multiple locations with same name")
+                    return 2
+                
+                self.cur.execute(f"UPDATE {category}s SET {key}=? WHERE name=?", (value, name))
+            else:
+                raise ValueError("No name or id provided")
 
             self.conn.commit()
-            print(f"Edited location '{name}' in {table_name}: {key}={value}")
-            return True
+            print(f"Edited location '{name}' in {category}s: {key}={value}")
+            return 0
         except Exception as e:
-            print(f"Failed to edit location '{name}' in {table_name}: {key}={value}")
+            print(f"Failed to edit location '{name}' in {category}s: {key}={value}")
             print(e)
-            return False
+            return 1
     
     def get_locations(self, category):
+        """Returns a list of all locations in the database."""
         self.cur.execute(f"SELECT * FROM {category}s")
         return self.cur.fetchall()
     
     def get_location(self, category, name):
+        """Returns a location with the specified name."""
+        if self._count_same_name(category, name) == 0:
+            print(f"No location with name '{name}' in {category}s")
+            return []
+        elif self._count_same_name(category, name) > 1:
+            print(f"Multiple locations with name '{name}' in {category}s")
+            self.cur.execute(f"SELECT * FROM {category}s WHERE name=?", (name,))
+            return self.cur.fetchall()
+        
+        print(f"Found location '{name}' in {category}s")
         self.cur.execute(f"SELECT * FROM {category}s WHERE name=?", (name,))
-        return self.cur.fetchone()
+        return [self.cur.fetchone()]
