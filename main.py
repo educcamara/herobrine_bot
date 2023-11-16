@@ -28,12 +28,16 @@ async def ping(ctx):
 @bot.command(name="locs")
 async def locs(ctx, category):
     print(f"{ctx.author} used the locs command")
+    if not category:
+        await ctx.message.delete()
+        await ctx.send("Nenhuma categoria fornecida", delete_after=10)
+        return
     if category not in categories.keys():
         await ctx.message.delete()
         await ctx.send("Categoria inválida", delete_after=10)
         return
 
-    locs_ = db.get_locations(categories[category])
+    locs_ = db.get_locations(categories[category]['name'])
     if not locs_:
         await ctx.message.delete()
         await ctx.send("Nenhuma localização encontrada", delete_after=10)
@@ -41,8 +45,8 @@ async def locs(ctx, category):
 
     msg = ""
     for loc in locs_:
-        loc_ = str(*loc)
-        msg += f"{loc_}\n"
+        loc = str(loc).replace("(", "").replace(")", "")
+        msg += f"{loc}\n"
 
     await ctx.send(msg)
 
@@ -56,6 +60,8 @@ async def add(ctx, category):
         await ctx.send("Categoria inválida", delete_after=10)
         return
 
+    categories_ = categories
+
     def check_author(usr):
         return usr.author == ctx.author
 
@@ -63,6 +69,32 @@ async def add(ctx, category):
         await ctx.send(inp_str)
         var = await bot.wait_for("message", check=check_author)
         return var.content
+
+    name = await parseinput("Digite o nome da sua localização:")
+    coords = await parseinput("Digite as coordenadas da sua localização (formato `x y z` com y opcional):")
+    args_lst = [name, coords]
+    for arg in categories_[category]['args']:
+        if arg == 'size':
+            arg_inp = await parseinput("Digite o tamanho da caverna:")
+        elif arg == 'beauty':
+            arg_inp = await parseinput(f"Digite a beleza da paisagem:")
+        elif arg == 'explored':
+            arg_inp = await parseinput("""Digite a estrutura foi:
+            - não explorada
+            - parcialmente explorada
+            - explorada
+            """)
+        else:
+            arg_inp = await parseinput("Digite uma descrição:")
+        args_lst.append(arg_inp)
+
+    class_ = categories_[category]['class']
+    loc = class_(*args_lst)
+
+    if db.add_location(loc.as_dict()):
+        await ctx.send(f"Localização '{loc.name}' adicionada com sucesso")
+    else:
+        await ctx.send(f"Erro ao adicionar localização '{loc.name}'")
 
 
 @bot.command(name="ephemeral")

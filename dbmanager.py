@@ -1,7 +1,9 @@
 import sqlite3
 
+
 class LocationsManager:
-    """Manages the locations database."""
+    """Manages the 'locations' database."""
+
     def __init__(self):
         self.conn = sqlite3.connect('locations.db')
         self.cur = self.conn.cursor()
@@ -69,7 +71,8 @@ class LocationsManager:
         )""")
         self.conn.commit()
 
-    def _filter_dict(self, location_dict):
+    @staticmethod
+    def _filter_dict(location_dict):
         keys = []
         new_dct = {}
         for key, value in location_dict.items():
@@ -81,7 +84,7 @@ class LocationsManager:
             elif value is not None:
                 keys.append(key)
                 new_dct[key] = value
-        
+
         return keys, new_dct
 
     def add_location(self, location_dict) -> bool:
@@ -99,15 +102,15 @@ class LocationsManager:
             print(f"Added location '{location_dict['name']}' to {table_name}")
             return True
         except Exception as e:
-            print(f"Failed to add location '{location_dict['name']}' to {table_name}")
+            print(f"Failed to add location '{location_dict['name']}' to database")
             print(e)
             return False
-        
+
     def _count_same_name(self, category, name):
         self.cur.execute(f"SELECT COUNT(*) FROM {category}s WHERE name=?", (name,))
         return self.cur.fetchone()[0]
 
-    def edit_location(self, category, key, value, id_=None, name=None,) -> int:
+    def edit_location(self, category, key, value, id_=None, name=None, ) -> int:
         """Edits a location in the database."""
         try:
             if id_:
@@ -118,7 +121,7 @@ class LocationsManager:
                 elif self._count_same_name(category, name) > 1:
                     print(f"Failed to edit location '{name}' in {category}s: multiple locations with same name")
                     return 2
-                
+
                 self.cur.execute(f"UPDATE {category}s SET {key}=? WHERE name=?", (value, name))
             else:
                 raise ValueError("No name or id provided")
@@ -130,12 +133,16 @@ class LocationsManager:
             print(f"Failed to edit location '{name}' in {category}s: {key}={value}")
             print(e)
             return 1
-    
+
     def get_locations(self, category):
         """Returns a list of all locations in the database."""
-        self.cur.execute(f"SELECT * FROM {category}s")
+        try:
+            self.cur.execute(f"SELECT * FROM {category}s ORDER BY name")
+        except sqlite3.Error as e:
+            print(e)
+            return []
         return self.cur.fetchall()
-    
+
     def get_location(self, category, name):
         """Returns a location with the specified name."""
         if self._count_same_name(category, name) == 0:
@@ -145,7 +152,7 @@ class LocationsManager:
             print(f"Multiple locations with name '{name}' in {category}s")
             self.cur.execute(f"SELECT * FROM {category}s WHERE name=?", (name,))
             return self.cur.fetchall()
-        
+
         print(f"Found location '{name}' in {category}s")
         self.cur.execute(f"SELECT * FROM {category}s WHERE name=?", (name,))
         return [self.cur.fetchone()]
