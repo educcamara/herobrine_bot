@@ -12,6 +12,7 @@ intents.message_content = True
 bot = commands.Bot(command_prefix=">", intents=intents)
 db = LocationsManager()
 
+
 @bot.event
 async def on_ready():
     print(f"\033[32m{bot.user} logged in as {bot.user.name}\033[0m")
@@ -50,11 +51,18 @@ async def locs(ctx, category):
 async def add(ctx, category):
     print(f"{ctx.author} used the add command")
     if category not in categories.keys():
+        print(f"{ctx.author} failed to use 'add' with an invalid category")
         await ctx.message.delete()
         await ctx.send("Categoria inválida", delete_after=10)
         return
 
+    def check_author(usr):
+        return usr.author == ctx.author
 
+    async def parseinput(inp_str):
+        await ctx.send(inp_str)
+        var = await bot.wait_for("message", check=check_author)
+        return var.content
 
 
 @bot.command(name="ephemeral")

@@ -175,9 +175,9 @@ class Other(Location):
 
 
 categories = {
-    'estrutura': {'name': 'Structure', 'class': Structure},
-    'bioma': {'name': 'Biome', 'class': Biome},
-    'caverna': {'name': 'Cave', 'class': Cave},
-    'paisagem': {'name': 'Landscape', 'class': Landscape},
-    'outro': {'name': 'Other', 'class': Other}
+    'estrutura': {'name': 'Structure', 'class': Structure, 'args': ['explored']},
+    'bioma': {'name': 'Biome', 'class': Biome, 'args': ['desc']},
+    'caverna': {'name': 'Cave', 'class': Cave, 'args': ['size', 'explored']},
+    'paisagem': {'name': 'Landscape', 'class': Landscape, 'args': ['beauty', 'desc']},
+    'outro': {'name': 'Other', 'class': Other, 'args': ['desc']}
 }
