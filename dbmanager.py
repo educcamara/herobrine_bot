@@ -8,67 +8,55 @@ class LocationsManager:
         self.conn = sqlite3.connect('locations.db')
         self.cur = self.conn.cursor()
 
-        self._initialize_structures()
-        self._initialize_biomes()
-        self._initialize_caves()
-        self._initialize_landscapes()
-        self._initialize_others()
+        self._initialize_locations()
 
-    def _initialize_structures(self):
+    def _initialize_locations(self):
         self.cur.execute("""CREATE TABLE IF NOT EXISTS Structures (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name VARCHAR(127),
-            x INTEGER NOT NULL,
-            y INTEGER DEFAULT NULL,
-            z INTEGER NOT NULL,
-            explored VARCHAR(31) NOT NULL
-        )""")
-        self.conn.commit()
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name VARCHAR(127),
+                    x INTEGER NOT NULL,
+                    y INTEGER DEFAULT NULL,
+                    z INTEGER NOT NULL,
+                    explored VARCHAR(31) NOT NULL
+                )""")
 
-    def _initialize_biomes(self):
         self.cur.execute("""CREATE TABLE IF NOT EXISTS Biomes (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name VARCHAR(127),
-            x INTEGER NOT NULL,
-            y INTEGER DEFAULT NULL,
-            z INTEGER NOT NULL,
-            desc VARCHAR(255) NOT NULL
-        )""")
-        self.conn.commit()
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name VARCHAR(127),
+                    x INTEGER NOT NULL,
+                    y INTEGER DEFAULT NULL,
+                    z INTEGER NOT NULL,
+                    desc VARCHAR(255) NOT NULL
+                )""")
 
-    def _initialize_caves(self):
         self.cur.execute("""CREATE TABLE IF NOT EXISTS Caves (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name VARCHAR(127),
-            x INTEGER NOT NULL,
-            y INTEGER DEFAULT NULL,
-            z INTEGER NOT NULL,
-            size VARCHAR(31) NOT NULL,
-            explored VARCHAR(31) NOT NULL
-        )""")
-        self.conn.commit()
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name VARCHAR(127),
+                    x INTEGER NOT NULL,
+                    y INTEGER DEFAULT NULL,
+                    z INTEGER NOT NULL,
+                    size VARCHAR(31) NOT NULL,
+                    explored VARCHAR(31) NOT NULL
+                )""")
 
-    def _initialize_landscapes(self):
         self.cur.execute("""CREATE TABLE IF NOT EXISTS Landscapes (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name VARCHAR(127),
-            x INTEGER NOT NULL,
-            y INTEGER DEFAULT NULL,
-            z INTEGER NOT NULL,
-            beauty INTEGER NOT NULL,
-            desc VARCHAR(255) NOT NULL
-        )""")
-        self.conn.commit()
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name VARCHAR(127),
+                    x INTEGER NOT NULL,
+                    y INTEGER DEFAULT NULL,
+                    z INTEGER NOT NULL,
+                    beauty INTEGER NOT NULL,
+                    desc VARCHAR(255) NOT NULL
+                )""")
 
-    def _initialize_others(self):
         self.cur.execute("""CREATE TABLE IF NOT EXISTS Others (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name VARCHAR(127),
-            x INTEGER NOT NULL,
-            y INTEGER DEFAULT NULL,
-            z INTEGER NOT NULL,
-            desc VARCHAR(255) NOT NULL
-        )""")
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name VARCHAR(127),
+                    x INTEGER NOT NULL,
+                    y INTEGER DEFAULT NULL,
+                    z INTEGER NOT NULL,
+                    desc VARCHAR(255) NOT NULL
+                )""")
         self.conn.commit()
 
     @staticmethod
@@ -137,11 +125,20 @@ class LocationsManager:
     def get_locations(self, category):
         """Returns a list of all locations in the database."""
         try:
-            self.cur.execute(f"SELECT * FROM {category}s ORDER BY name")
+            self.cur.execute(f"SELECT * FROM {category}s")
         except sqlite3.Error as e:
             print(e)
             return []
         return self.cur.fetchall()
+
+    def get_category_args(self, category):
+        """Returns a list of all arguments for the specified category."""
+        try:
+            self.cur.execute(f"SELECT * FROM {category}s")
+        except sqlite3.Error as e:
+            print(e)
+            return []
+        return [description[0] for description in self.cur.description]
 
     def get_location(self, category, name):
         """Returns a location with the specified name."""

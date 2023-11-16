@@ -5,6 +5,7 @@ from discord.ext import commands
 from dotenv import load_dotenv
 from locations import *
 from dbmanager import *
+from outputmanager import *
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -37,18 +38,16 @@ async def locs(ctx, category):
         await ctx.send("Categoria inválida", delete_after=10)
         return
 
-    locs_ = db.get_locations(categories[category]['name'])
+    cat_name = categories[category]['name']
+    locs_ = db.get_locations(cat_name)
     if not locs_:
         await ctx.message.delete()
-        await ctx.send("Nenhuma localização encontrada", delete_after=10)
+        await ctx.send(f"Nenhuma localização da categoria '{category}' encontrada", delete_after=10)
         return
+    args_ = db.get_category_args(cat_name)
+    embed = get_embed_locations(category, locs_, args_)
 
-    msg = ""
-    for loc in locs_:
-        loc = str(loc).replace("(", "").replace(")", "")
-        msg += f"{loc}\n"
-
-    await ctx.send(msg)
+    await ctx.send(embed=embed)
 
 
 @bot.command(name="add")
