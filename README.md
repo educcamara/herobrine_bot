@@ -12,7 +12,9 @@ Antes da criação do bot, nós usávamos um canal de texto para manter essas in
 
 ## Comandos
 
-### `>help`
+### Help
+
+`>help <*args>`
 
 **WIP**
 
