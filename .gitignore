@@ -1,4 +1,6 @@
 .idea
 .env
 .vscode/
+__pycache__/
 temp.py
+locations.db
