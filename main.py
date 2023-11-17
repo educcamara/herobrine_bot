@@ -26,18 +26,25 @@ async def ping(ctx):
     await ctx.send(f"Pong com {latency}ms")
 
 
-@bot.command(name="locs")
-async def locs(ctx, category):
-    print(f"{ctx.author} used the locs command")
+async def getinput(ctx, inp_str) -> str:
+    await ctx.send(inp_str)
+    var = await bot.wait_for("message", check=lambda m: m.author == ctx.author)
+    return var.content
+
+
+async def checkcategory(ctx, category: str):
     if not category:
         await ctx.message.delete()
         await ctx.send("Nenhuma categoria fornecida", delete_after=10)
-        return
+        return False
     if category not in categories.keys():
         await ctx.message.delete()
         await ctx.send("Categoria inválida", delete_after=10)
-        return
+        return False
+    return True
 
+
+async def sendlocations(ctx, category: str):
     cat_name = categories[category]['name']
     locs_ = db.get_locations(cat_name)
     if not locs_:
@@ -50,41 +57,39 @@ async def locs(ctx, category):
     await ctx.send(embed=embed)
 
 
+@bot.command(name="locate")
+async def locate(ctx, category: str):
+    print(f"{ctx.author} used the locs command")
+    if not await checkcategory(ctx, category):
+        return
+
+    await sendlocations(ctx, category)
+
+
 @bot.command(name="add")
-async def add(ctx, category):
+async def add(ctx, category: str):
     print(f"{ctx.author} used the add command")
-    if category not in categories.keys():
-        print(f"{ctx.author} failed to use 'add' with an invalid category")
-        await ctx.message.delete()
-        await ctx.send("Categoria inválida", delete_after=10)
+    if not await checkcategory(ctx, category):
         return
 
     categories_ = categories
 
-    def check_author(usr):
-        return usr.author == ctx.author
-
-    async def parseinput(inp_str):
-        await ctx.send(inp_str)
-        var = await bot.wait_for("message", check=check_author)
-        return var.content
-
-    name = await parseinput("Digite o nome da sua localização:")
-    coords = await parseinput("Digite as coordenadas da sua localização (formato `x y z` com y opcional):")
+    name = await getinput(ctx, "Digite o nome da sua localização:")
+    coords = await getinput(ctx, "Digite as coordenadas da sua localização (formato `x y z` com y opcional):")
     args_lst = [name, coords]
     for arg in categories_[category]['args']:
         if arg == 'size':
-            arg_inp = await parseinput("Digite o tamanho da caverna:")
+            arg_inp = await getinput(ctx, "Digite o tamanho da caverna:")
         elif arg == 'beauty':
-            arg_inp = await parseinput(f"Digite a beleza da paisagem:")
+            arg_inp = await getinput(ctx, f"Digite a beleza da paisagem:")
         elif arg == 'explored':
-            arg_inp = await parseinput("""Digite a estrutura foi:
-            - não explorada
-            - parcialmente explorada
-            - explorada
-            """)
+            arg_inp = await getinput(ctx, "Digite se a estrutura foi:\n\
+                                          - **Explorada**\n\
+                                          - **Parcialmente explorada**\n\
+                                          - **Não explorada**\n")
+            arg_inp = arg_inp.title()
         else:
-            arg_inp = await parseinput("Digite uma descrição:")
+            arg_inp = await getinput(ctx, "Digite uma descrição:")
         args_lst.append(arg_inp)
 
     class_ = categories_[category]['class']
@@ -94,6 +99,28 @@ async def add(ctx, category):
         await ctx.send(f"Localização '{loc.name}' adicionada com sucesso")
     else:
         await ctx.send(f"Erro ao adicionar localização '{loc.name}'")
+
+
+@bot.command(name="delete")
+async def delete(ctx, category: str):
+    print(f"{ctx.author} used the delete command")
+    if not await checkcategory(ctx, category):
+        return
+
+    categories_ = categories
+    cat_name = categories_[category]['name']
+    await sendlocations(ctx, category)
+
+    id_ = await getinput(ctx, "Digite o ID da localização que deseja deletar:")
+    if not id_.isdigit():
+        await ctx.message.delete()
+        await ctx.send("ID inválido", delete_after=10)
+        return
+
+    if db.delete_location(cat_name, id_):
+        await ctx.send(f"{category.title()} de ID {id_} deletado(a) com sucesso")
+    else:
+        await ctx.send(f"Erro ao deletar localização de ID {id_} em '{category}'")
 
 
 @bot.command(name="ephemeral")

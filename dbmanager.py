@@ -153,3 +153,15 @@ class LocationsManager:
         print(f"Found location '{name}' in {category}s")
         self.cur.execute(f"SELECT * FROM {category}s WHERE name=?", (name,))
         return [self.cur.fetchone()]
+
+    def delete_location(self, category, id_):
+        """Deletes a location with the specified id."""
+        try:
+            self.cur.execute(f"DELETE FROM {category}s WHERE id=?", (id_,))
+            self.conn.commit()
+            print(f"Deleted location {id_} from {category}s")
+            return True
+        except Exception as e:
+            print(f"Failed to delete location {id_} from {category}s")
+            print(e)
+            return False
