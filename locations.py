@@ -24,10 +24,10 @@ class Location:
         self.name = name
         self.coords = self._strpcoords(coords)
         self.category = category
-        self.desc = desc
+        self.explored = explored
         self.size = size
         self.beauty = beauty
-        self.explored = explored
+        self.desc = desc
 
     def _strpcoords(self, coords):
         try:

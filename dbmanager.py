@@ -140,19 +140,31 @@ class LocationsManager:
             return []
         return [description[0] for description in self.cur.description]
 
-    def get_location(self, category, name):
+    def get_location(self, category, name=None, id_=None):
         """Returns a location with the specified name."""
-        if self._count_same_name(category, name) == 0:
-            print(f"No location with name '{name}' in {category}s")
-            return []
-        elif self._count_same_name(category, name) > 1:
-            print(f"Multiple locations with name '{name}' in {category}s")
-            self.cur.execute(f"SELECT * FROM {category}s WHERE name=?", (name,))
-            return self.cur.fetchall()
+        try:
+            if id_:
+                self.cur.execute(f"SELECT * FROM {category}s WHERE id=?", (id_,))
+                return [self.cur.fetchone()]
+            elif name:
+                if self._count_same_name(category, name) == 0:
+                    print(f"No location with name '{name}' in {category}s")
+                    return []
+                elif self._count_same_name(category, name) > 1:
+                    print(f"Multiple locations with name '{name}' in {category}s")
+                    self.cur.execute(f"SELECT * FROM {category}s WHERE name=?", (name,))
+                    return self.cur.fetchall()
 
-        print(f"Found location '{name}' in {category}s")
-        self.cur.execute(f"SELECT * FROM {category}s WHERE name=?", (name,))
-        return [self.cur.fetchone()]
+                print(f"Found location '{name}' in {category}s")
+                self.cur.execute(f"SELECT * FROM {category}s WHERE name=?", (name,))
+                return [self.cur.fetchone()]
+            else:
+                print("No name or id provided")
+                return []
+        except Exception as e:
+            print(f"Failed to get location in {category}s")
+            print(e)
+            return []
 
     def delete_location(self, category, id_):
         """Deletes a location with the specified id."""

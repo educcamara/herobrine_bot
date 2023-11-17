@@ -101,15 +101,82 @@ async def add(ctx, category: str):
         await ctx.send(f"Erro ao adicionar localização '{loc.name}'")
 
 
+@bot.command(name="edit")
+async def edit(ctx, category: str):
+    print(f"{ctx.author} used the edit command")
+    if not await checkcategory(ctx, category):
+        return
+
+    await sendlocations(ctx, category)
+    categories_ = categories
+    cat_name = categories_[category]['name']
+
+    id_ = await getinput(ctx, "Digite o ID da localização que deseja editar:")
+    if not id_.isdigit():
+        await ctx.message.delete()
+        await ctx.send("ID inválido", delete_after=10)
+        return
+
+    if not db.get_location(cat_name, id_=id_):
+        await ctx.message.delete()
+        await ctx.send(f"Localização de ID {id_} não encontrada", delete_after=10)
+        return
+
+    key_value = await getinput(ctx, "Digite o nome do atributo (nome, coordenadas, exploração, \
+tamanho, beleza, descrição) que deseja editar e seu novo valor (formato `atributo valor`):")
+    try:
+        key_value = key_value.split()
+        key = key_value[0]
+        key_translator = {
+            'nome': 'name',
+            'coordenadas': 'coords',
+            'exploração': 'explored',
+            'tamanho': 'size',
+            'beleza': 'beauty',
+            'descrição': 'desc'
+        }
+        if key not in key_translator.keys():
+            await ctx.message.delete()
+            await ctx.send("Atributo inválido", delete_after=10)
+            return
+        key = key_translator[key]
+        if key == 'coords':
+            coords = key_value[1:]
+            if len(coords) == 2:
+                x, z = [int(coord) for coord in coords]
+                y = None
+            elif len(coords) == 3:
+                x, y, z = [int(coord) for coord in coords]
+            else:
+                await ctx.message.delete()
+                await ctx.send("Coordenadas inválidas", delete_after=10)
+                return
+            db.edit_location(cat_name, 'x', x, id_=id_)
+            db.edit_location(cat_name, 'y', y, id_=id_)
+            db.edit_location(cat_name, 'z', z, id_=id_)
+        elif key == 'beauty':
+            beauty = int(key_value[1])
+            db.edit_location(cat_name, key, beauty, id_=id_)
+        else:
+            value = ' '.join(key_value[1:])
+            db.edit_location(cat_name, key, value, id_=id_)
+    except Exception as e:
+        await ctx.message.delete()
+        await ctx.send("Erro ao editar localização", delete_after=10)
+        print(e)
+        return
+    await ctx.send(f"Localização de ID {id_} editada com sucesso")
+
+
 @bot.command(name="delete")
 async def delete(ctx, category: str):
     print(f"{ctx.author} used the delete command")
     if not await checkcategory(ctx, category):
         return
 
+    await sendlocations(ctx, category)
     categories_ = categories
     cat_name = categories_[category]['name']
-    await sendlocations(ctx, category)
 
     id_ = await getinput(ctx, "Digite o ID da localização que deseja deletar:")
     if not id_.isdigit():
