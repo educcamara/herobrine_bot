@@ -3,7 +3,7 @@ import config from "./config.json" with { type: "json" };
 import logger from "./src/logger.js";
 
 const client = new Client({
-	intents: [GatewayIntentBits.Guilds]
+	intents: [GatewayIntentBits.Guilds] // Guilds -> se refere a um servidor do Discord
 });
 
 client.once(Events.ClientReady, (readyClient) => {
