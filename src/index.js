@@ -1,6 +1,6 @@
 import { Client, Events, GatewayIntentBits }  from "discord.js";
-import config from "./config.json" with { type: "json" };
-import logger from "./src/logger.js";
+import config from "../config.json" with { type: "json" };
+import logger from "./logger.js";
 
 const client = new Client({
 	intents: [GatewayIntentBits.Guilds] // Guilds -> se refere a um servidor do Discord
