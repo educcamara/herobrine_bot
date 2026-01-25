@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import { Collection } from "discord.js";
 import { fileURLToPath, pathToFileURL } from "url";
+import { loadCommands } from "../infra/load-commands";
 
 export default class CommandHandler {
 	#commands = new Collection();
@@ -11,31 +12,14 @@ export default class CommandHandler {
 	}
 
 	async load() {
-		const commandsPath = fileURLToPath(this.commandsRootUrl);
-		// readdirSync returns an array of names (files and folders) present in the directory
-		const folders = fs.readdirSync(commandsPath);
+		const loaded = await loadCommands(this.commandsRootUrl);
 
-		for (const folder of folders) {
-			const folderPath = path.join(commandsPath, folder);
-			const files = fs
-				.readdirSync(folderPath)
-				.filter(file => file.endsWith(".js"));
-
-			for (const file of files) {
-				const fileUrl = pathToFileURL(
-					path.join(folderPath, file)
-				);
-
-				const module = await import(fileUrl);
-				const command = module.default;
-
-				if (command?.data && command?.execute) {
-					this.#commands.set(command.data.name, command);
-				} else {
-					console.warn(`Command at ${fileUrl} is missing "data" or "execute"`);
-					throw new Error(`Invalid command definition in ${fileUrl}`);
-				}
+		for (const { module, fileUrl } of loaded) {
+			if (!module?.data || !module?.execute) {
+				throw new Error(`Invalid command definition in ${fileUrl}`);
 			}
+
+			this.#commands.set(module.data.name, module);
 		}
 	}
 
