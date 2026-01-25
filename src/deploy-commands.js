@@ -1,10 +1,7 @@
-import fs from "fs";
-import path from "path";
-import { fileURLToPath, pathToFileURL } from "url";
-
 import { REST, Routes } from "discord.js";
 import config from "../config.json" with { type: "json" };
 import logger from "./infra/logger.js";
+import { loadCommands } from "./infra/load-commands.js";
 
 // Setup Paths
 const commandsRoot = new URL("./commands", import.meta.url);
