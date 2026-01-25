@@ -10,7 +10,7 @@ import {
 } from "discord.js";
 
 import config from "../config.json" with { type: "json" };
-import logger from "./logger.js";
+import logger from "./infra/logger.js";
 
 // Setup
 const __filename = fileURLToPath(import.meta.url);
