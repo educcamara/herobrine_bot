@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import { Collection } from "discord.js";
 import { fileURLToPath, pathToFileURL } from "url";
-import { loadCommands } from "../infra/load-commands";
+import { loadCommands } from "../infra/load-commands.js";
 
 export default class CommandHandler {
 	#commands = new Collection();
