@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "discord.js";
-import MessageBuilder from "../../messaging/message/MessageBuilder";
-import { reply } from "../../messaging/discord/reply";
+import MessageBuilder from "../../messaging/message/MessageBuilder.js";
+import { reply } from "../../messaging/discord/reply.js";
 
 export default {
 	data: new SlashCommandBuilder()
