@@ -12,15 +12,15 @@ export default {
 		const joinedAt = interaction.member?.joinedAt;
 
 		const message = new MessageBuilder()
-			.addText(
-				`**Username:** ${user.tag}\n` +
-				`**ID:** ${user.id}\n` +
-				`**Joined At:** ${joinedAt ? joinedAt.toLocaleDateString() : "Unknown"}`
-			)
 			.addEmbed(embed =>
 				embed
 					.setTitle("User Information")
 					.setThumbnail(user.displayAvatarURL({ dynamic: true }))
+
+					.addField("Username", user.tag, true)
+					.addField("ID", user.id, true)
+					.addField("Joined At", joinedAt ? joinedAt.toLocaleDateString() : "Unknown", true)
+					.addField("Bot", user.bot ? "Yes" : "No")
 			)
 			.build();
 		
