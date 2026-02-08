@@ -1,5 +1,5 @@
 import { Collection } from "discord.js";
-import { loadCommands } from "../infra/load-commands.js";
+import { loadCommands } from "../infrastructure/discord/load-commands.js";
 
 export default class CommandHandler {
 	#commands = new Collection();

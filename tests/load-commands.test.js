@@ -5,7 +5,7 @@ import path from "path";
 import os from "os";
 
 import { fileURLToPath, pathToFileURL } from "url";
-import { loadCommands } from "../src/infra/load-commands.js";
+import { loadCommands } from "../src/infrastructure/discord/load-commands.js";
 
 /**
  * Helper to create a temp command file
