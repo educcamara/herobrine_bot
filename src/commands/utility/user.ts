@@ -1,6 +1,7 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import MessageBuilder from "../../domain/messaging/message/MessageBuilder.js";
+import { ChatInputCommandInteraction, GuildMember, SlashCommandBuilder } from "discord.js";
+
 import { reply } from "../../domain/messaging/discord/reply.js";
+import MessageBuilder from "../../domain/messaging/message/MessageBuilder.js";
 
 export default {
 	data: new SlashCommandBuilder()
@@ -9,13 +10,17 @@ export default {
 
 	async execute(interaction: ChatInputCommandInteraction) { 
 		const user = interaction.user;
-		const joinedAt = interaction.member?.joinedAt;
+		let joinedAt: Date | null = null;
+
+		if (interaction.member instanceof GuildMember) {
+			joinedAt = interaction.member.joinedAt;
+		}
 
 		const message = new MessageBuilder()
 			.addEmbed(embed =>
 				embed
 					.setTitle("User Information")
-					.setThumbnail(user.displayAvatarURL({ dynamic: true }))
+					.setThumbnail(user.displayAvatarURL())
 					.setDescription(
 						`**User Tag:** ${user.tag}\n` +
 						`**User ID:** ${user.id}\n` +
