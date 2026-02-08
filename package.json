@@ -7,7 +7,7 @@
     "test": "node --test",
     "dev": "nodemon index.js",
     "start": "node index.js",
-    "register": "node src/deploy-commands.js"
+    "register": "node src/app/discord/register-commands.js"
   },
   "repository": {
     "type": "git",

@@ -1,7 +1,7 @@
 import { REST, Routes } from "discord.js";
-import config from "../config.json" with { type: "json" };
-import logger from "./infra/logger.js";
-import { loadCommands } from "./infra/load-commands.js";
+import config from "../../../config.json" with { type: "json" };
+import logger from "../../infra/logger.js";
+import { loadCommands } from "../../infra/load-commands.js";
 
 // Setup Paths
 const commandsRoot = new URL("./commands", import.meta.url);
