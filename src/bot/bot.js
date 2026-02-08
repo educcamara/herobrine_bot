@@ -8,8 +8,8 @@ import {
 	MessageFlags
 } from "discord.js";
 
-import CommandHandler from "./handlers/command-handler.js";
-import logger from "./infra/logger.js";
+import CommandHandler from "../handlers/command-handler.js";
+import logger from "../infra/logger.js";
 
 // Setup Paths
 const __filename = fileURLToPath(import.meta.url);
