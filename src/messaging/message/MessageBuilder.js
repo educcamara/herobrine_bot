@@ -1,5 +1,5 @@
 import Message from "./Message.js";
-
+import EmbedBuilder from "./embed/EmbedBuilder.js";
 
 export default class MessageBuilder {
 	#content = null;

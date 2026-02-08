@@ -17,6 +17,11 @@ export default class EmbedBuilder {
 		return this;
 	}
 
+	setThumbnail(url) {
+		this.#embed.thumbnail = { url };
+		return this;
+	}
+
 	setFooter(text) {
 		this.#embed.footer = { text };
 		return this;
