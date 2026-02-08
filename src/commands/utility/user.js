@@ -16,11 +16,11 @@ export default {
 				embed
 					.setTitle("User Information")
 					.setThumbnail(user.displayAvatarURL({ dynamic: true }))
-
-					.addField("Username", user.tag, true)
-					.addField("ID", user.id, true)
-					.addField("Joined At", joinedAt ? joinedAt.toLocaleDateString() : "Unknown", true)
-					.addField("Bot", user.bot ? "Yes" : "No")
+					.setDescription(
+						`**User Tag:** ${user.tag}\n` +
+						`**User ID:** ${user.id}\n` +
+						`**Joined At:** ${joinedAt ? joinedAt.toLocaleDateString() : "Unknown"}\n`
+					)
 			)
 			.build();
 		
