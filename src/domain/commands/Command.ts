@@ -1,6 +1,10 @@
 import { ChatInputCommandInteraction } from "discord.js";
 
+export interface CommandData {
+	name: string;
+}
+
 export interface Command {
-	data: unknown;
+	data: CommandData;
 	execute(interaction: ChatInputCommandInteraction): Promise<void>;
 }
