@@ -21,7 +21,7 @@ const client = new Client({
 });
 
 // Command Handler
-const commandsPath = path.join(__dirname, "commands");
+const commandsPath = path.join(__dirname, "../commands");
 const commandHandler = new CommandHandler(
 	pathToFileURL(commandsPath)
 );
