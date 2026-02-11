@@ -3,6 +3,7 @@
 .vscode/
 
 node_modules/
+dist/
 config.json
 
 __pycache__/
