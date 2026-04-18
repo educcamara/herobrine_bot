@@ -4,11 +4,11 @@
   "description": "A Discord bot that helps you in your Forever World :)",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
-    "dev": "tsx watch src/index.ts",
-    "start": "node dist/index.js",
-    "register": "tsx src/app/discord/register-commands.ts",
-    "test": "node --test"
+    "build":    "tsc",
+    "dev":      "NODE_ENV=development tsx watch src/index.ts",
+    "start":    "NODE_ENV=production node dist/index.js",
+    "register": "NODE_ENV=development tsx src/app/discord/register-commands.ts",
+    "test":     "node --test"
   },
   "repository": {
     "type": "git",
