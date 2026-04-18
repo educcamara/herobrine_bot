@@ -1,0 +1,32 @@
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+
+// Use case and repository imports
+import { CreateNote } from "../../app/notes/create-note.js";
+import { PostgresNoteRepository } from "../../infrastructure/database/postgres/repositories/PostgresNoteRepository.js";
+import logger from "../../infrastructure/logging/logger.js";
+
+const createNoteUseCase = new CreateNote(new PostgresNoteRepository());
+
+export default {
+	data: new SlashCommandBuilder()
+		.setName("addnote")
+		.setDescription("Adds a note for the user.")
+		.addStringOption(option =>
+			option.setName("content")
+				.setDescription("The content of the note")
+				.setRequired(true)
+		),
+	
+	async execute(interaction: ChatInputCommandInteraction) {
+		const userId = interaction.user.id;
+		const content = interaction.options.getString("content", true);
+
+		try {
+			const note = await createNoteUseCase.execute(userId, content);
+			await interaction.reply({ content: `Note added! (ID: ${note.id})`, ephemeral: true });
+		} catch (error) {
+			logger.error(`Error adding note: ${error instanceof Error ? error.message : String(error)}`);
+			await interaction.reply({ content: "Failed to add note.", ephemeral: true });
+		}
+	}
+};
