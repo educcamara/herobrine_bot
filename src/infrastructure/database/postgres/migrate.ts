@@ -22,7 +22,7 @@ async function runSqlMigration(pool: any, filename: string, sql: string) {
 	}
 }
 
-export async function runMigrations() {
+async function runMigrations() {
 	const pool = getPool();
 
 	// Ensure Migration Table Exists
@@ -53,4 +53,11 @@ export async function runMigrations() {
 	}
 
 	logger.info("All migrations applied successfully.");
-};
+}
+
+try {
+	await runMigrations();
+	process.exit(0);
+} catch (error) {
+	process.exit(1);
+}
