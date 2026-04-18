@@ -4,10 +4,11 @@ import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { CreateNote } from "../../app/notes/create-note.js";
 import { PostgresNoteRepository } from "../../infrastructure/database/postgres/repositories/PostgresNoteRepository.js";
 import logger from "../../infrastructure/logging/logger.js";
+import { Command } from "../../domain/commands/Command.js";
 
 const createNoteUseCase = new CreateNote(new PostgresNoteRepository());
 
-export default {
+const command: Command = {
 	data: new SlashCommandBuilder()
 		.setName("addnote")
 		.setDescription("Adds a note for the user.")
@@ -30,3 +31,5 @@ export default {
 		}
 	}
 };
+
+export default command;

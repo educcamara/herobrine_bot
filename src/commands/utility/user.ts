@@ -2,8 +2,9 @@ import { ChatInputCommandInteraction, GuildMember, SlashCommandBuilder } from "d
 
 import { reply } from "../../domain/messaging/discord/reply.js";
 import MessageBuilder from "../../domain/messaging/message/MessageBuilder.js";
+import { Command } from "../../domain/commands/Command.js";
 
-export default {
+const command: Command = {
 	data: new SlashCommandBuilder()
 		.setName("user")
 		.setDescription("Provides information about the user."),
@@ -32,3 +33,5 @@ export default {
 		await reply(interaction, message);
 	}
 };
+
+export default command;
