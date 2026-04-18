@@ -10,6 +10,9 @@
     "register": "NODE_ENV=development tsx src/app/discord/register-commands.ts",
     "test":     "node --test",
 
+    "migrate:dev": "NODE_ENV=development tsx src/infrastructure/database/postgres/migrate.ts",
+    "migrate:prod": "NODE_ENV=production tsx src/infrastructure/database/postgres/migrate.ts",
+
     "tmp":      "NODE_ENV=development tsx tmp/tmp.ts"
   },
   "repository": {
