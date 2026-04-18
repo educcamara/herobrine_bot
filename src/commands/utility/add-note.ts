@@ -1,10 +1,10 @@
 import { ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
+import logger from "../../infrastructure/logging/logger.js";
+import { Command } from "../../domain/commands/Command.js";
 
 // Use case and repository imports
 import { CreateNote } from "../../app/notes/create-note.js";
 import { PostgresNoteRepository } from "../../infrastructure/database/postgres/repositories/PostgresNoteRepository.js";
-import logger from "../../infrastructure/logging/logger.js";
-import { Command } from "../../domain/commands/Command.js";
 
 const createNoteUseCase = new CreateNote(new PostgresNoteRepository());
 
