@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
 
 // Use case and repository imports
 import { CreateNote } from "../../app/notes/create-note.js";
@@ -24,11 +24,17 @@ const command: Command = {
 
 		try {
 			const note = await createNoteUseCase.execute(userId, content);
-			await interaction.reply({ content: `Note added! (ID: ${note.id})`, ephemeral: true });
+			await interaction.reply({
+				content: `Note added! (ID: ${note.id})`,
+				flags: MessageFlags.Ephemeral
+			});
 		} catch (error) {
 			const errorMessage = error instanceof Error ? error.message : String(error);
 			logger.error(`Error adding note: ${errorMessage}`);
-			await interaction.reply({ content: `Failed to add note: ${errorMessage}`, ephemeral: true });
+			await interaction.reply({
+				content: `Failed to add note: ${errorMessage}`,
+				flags: MessageFlags.Ephemeral
+			});
 		}
 	}
 };
