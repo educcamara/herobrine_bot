@@ -5,8 +5,15 @@
 
 node_modules/
 dist/
+tmp/
 config.json
 
 __pycache__/
 temp.py
 locations.db
+
+*.tmp
+*.log
+*~
+.DS_Store
+*.bak
