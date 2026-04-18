@@ -2,8 +2,10 @@ import fs from "fs";
 import path from "path";
 import { getPool } from "./connection.js";
 import logger from "../../logging/logger.js";
+import { fileURLToPath } from "url";
 
-const migrationDir = new URL("./migrations", import.meta.url);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const migrationsPath = path.join(__dirname, "migrations");
 
 async function runSqlMigration(pool: any, filename: string, sql: string) {
 	logger.info(`Running migration: ${filename}`);
@@ -23,6 +25,7 @@ async function runSqlMigration(pool: any, filename: string, sql: string) {
 }
 
 async function runMigrations() {
+	logger.info("Starting database migrations");
 	const pool = getPool();
 
 	// Ensure Migration Table Exists
@@ -39,14 +42,16 @@ async function runMigrations() {
 
 	// Load Migration Files
 	const migrationFiles = fs
-		.readdirSync(path.dirname(migrationDir.pathname))
+		.readdirSync(migrationsPath)
 		.filter(file => file.endsWith(".sql"))
 		.sort();
+
+	logger.info(`Found ${migrationFiles.length} migration(s), ${executed.size} already applied.`);
 
 	for (const file of migrationFiles) {
 		if (executed.has(file)) continue;
 
-		const filePath = path.join(path.dirname(migrationDir.pathname), file);
+		const filePath = path.join(migrationsPath, file);
 		const sql = fs.readFileSync(filePath, "utf-8");
 
 		await runSqlMigration(pool, file, sql);
