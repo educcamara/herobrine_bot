@@ -8,7 +8,9 @@
     "dev":      "NODE_ENV=development tsx watch src/index.ts",
     "start":    "NODE_ENV=production node dist/index.js",
     "register": "NODE_ENV=development tsx src/app/discord/register-commands.ts",
-    "test":     "node --test"
+    "test":     "node --test",
+
+    "tmp":      "NODE_ENV=development tsx tmp/tmp.ts"
   },
   "repository": {
     "type": "git",
