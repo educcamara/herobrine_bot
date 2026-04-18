@@ -26,8 +26,9 @@ const command: Command = {
 			const note = await createNoteUseCase.execute(userId, content);
 			await interaction.reply({ content: `Note added! (ID: ${note.id})`, ephemeral: true });
 		} catch (error) {
-			logger.error(`Error adding note: ${error instanceof Error ? error.message : String(error)}`);
-			await interaction.reply({ content: "Failed to add note.", ephemeral: true });
+			const errorMessage = error instanceof Error ? error.message : String(error);
+			logger.error(`Error adding note: ${errorMessage}`);
+			await interaction.reply({ content: `Failed to add note: ${errorMessage}`, ephemeral: true });
 		}
 	}
 };
