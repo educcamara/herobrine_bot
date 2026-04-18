@@ -17,9 +17,5 @@ export function getPool(): Pool {
 	}
 
 	logger.debug(`PostgreSQL connection pool created (${env.db.host}:${env.db.port}/${env.db.name})`);
-	void pool
-		.query("SELECT NOW() AS now")
-		.then((result) => logger.debug(`Ping: ${result.rows[0]?.now}`))
-		.catch((error) => logger.error("PostgreSQL ping failed", error));
 	return pool;
 }
