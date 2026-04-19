@@ -23,6 +23,10 @@ export async function loadCommands(
 
   for (const folder of folders) {
     const folderPath = path.join(commandsPath, folder);
+    if (!fs.statSync(folderPath).isDirectory()) {
+      continue;
+    }
+
     const files = fs
       .readdirSync(folderPath)
       .filter(f => f.endsWith(".js") || f.endsWith(".ts"));
