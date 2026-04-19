@@ -27,7 +27,7 @@ const command: Command = {
 			const note = await createNoteUseCase.execute(userId, serverId, content);
 			await interaction.reply({
 				content: `Note added! (ID: ${note.id})`,
-				flags: MessageFlags.Ephemeral
+				// flags: MessageFlags.Ephemeral
 			});
 		} catch (error) {
 			const errorMessage = error instanceof Error ? error.message : String(error);
