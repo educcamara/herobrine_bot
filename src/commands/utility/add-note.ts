@@ -20,10 +20,11 @@ const command: Command = {
 	
 	async execute(interaction: ChatInputCommandInteraction) {
 		const userId = interaction.user.id;
+		const serverId = interaction.guildId;
 		const content = interaction.options.getString("content", true);
 
 		try {
-			const note = await createNoteUseCase.execute(userId, content);
+			const note = await createNoteUseCase.execute(userId, serverId, content);
 			await interaction.reply({
 				content: `Note added! (ID: ${note.id})`,
 				flags: MessageFlags.Ephemeral
