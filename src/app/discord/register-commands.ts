@@ -1,8 +1,8 @@
 import { REST, Routes } from "discord.js";
-import config from "../../../config.json" with { type: "json" };
 import logger from "../../infrastructure/logging/logger.js";
 import { loadCommands } from "../../infrastructure/discord/load-commands.js";
 import { Command } from "../../domain/commands/Command.js";
+import config from "../../config/env.js";
 
 function isCommand(module: unknown): module is Command {
 	return (
@@ -30,22 +30,28 @@ const commands = loaded
   .map(({ module }) => module.data.toJSON());
 
 // REST Client
-const rest = new REST({ version: "10" }).setToken(config.discord_token);
+const rest = new REST({ version: "10" }).setToken(config.discord.token);
 
 // Deploy Commands
 try {
 	logger.info(`Registering ${commands.length} commands...`);
 
-	// Deploy to a server
-	await rest.put(
-		Routes.applicationGuildCommands(
-			config.client_id,
-			config.guild_id
-		),
-		{ body: commands }
-	);
-	// Deploy globally
-	// await rest.put(Routes.applicationCommands(config.client_id), { body: commands });
+	const isProduction = config.nodeEnv === "production";
+	
+	if (isProduction) {
+		logger.info("Deploying commands globally...");
+		const route = Routes.applicationCommands(config.discord.clientId);
+		await rest.put(route, { body: commands });
+
+	} else {
+		logger.info("Deploying commands to guild...");
+		if (!config.discord.guildId) {
+			throw new Error("Guild ID is required for development deployment");
+		}
+		const route = Routes.applicationGuildCommands(config.discord.clientId, config.discord.guildId);
+		await rest.put(route, { body: commands });
+		
+	}
 
 	logger.info("Commands registered successfully.");
 } catch (error) {
