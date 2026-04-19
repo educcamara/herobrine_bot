@@ -47,7 +47,7 @@ const command: Command = {
 		logger.info(`Formatted notes for user ${userId} in server ${serverId || "DM"}`);
 
 		await interaction.reply({
-			content: `Your notes:\n${formattedNotes.join("\n")}`,
+			content: `${interaction.user}'s notes:\n${formattedNotes.join("\n")}`,
 			// flags: MessageFlags.Ephemeral
 		});
 	},
