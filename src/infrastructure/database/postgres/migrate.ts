@@ -9,18 +9,21 @@ const migrationsPath = path.join(__dirname, "migrations");
 
 async function runSqlMigration(pool: any, filename: string, sql: string) {
 	logger.info(`Running migration: ${filename}`);
-	await pool.query("BEGIN");
+	const client = await pool.connect();
 	try {
-		await pool.query(sql);
-		await pool.query(`
+		await client.query("BEGIN");
+		await client.query(sql);
+		await client.query(`
 			INSERT INTO Migration (id) VALUES ($1)
 		`, [filename]);
-		await pool.query("COMMIT");
+		await client.query("COMMIT");
 		logger.info(`Migration applied: ${filename}`);
 	} catch (error) {
-		await pool.query("ROLLBACK");
+		await client.query("ROLLBACK");
 		logger.error(`Failed to apply migration ${filename}: ${error instanceof Error ? error.message : String(error)}`);
 		throw error;
+	} finally {
+		client.release();
 	}
 }
 
