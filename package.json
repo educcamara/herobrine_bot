@@ -7,11 +7,14 @@
     "build":    "tsc",
     "dev":      "NODE_ENV=development tsx watch src/index.ts",
     "start":    "NODE_ENV=production node dist/index.js",
-    "register": "NODE_ENV=development tsx src/app/discord/register-commands.ts",
+
     "test":     "node --test",
 
-    "migrate:dev": "NODE_ENV=development tsx src/infrastructure/database/postgres/migrate.ts",
-    "migrate:prod": "NODE_ENV=production tsx src/infrastructure/database/postgres/migrate.ts",
+    "register:dev":   "NODE_ENV=development tsx src/app/discord/register-commands.ts",
+    "register:prod":  "NODE_ENV=production tsx src/app/discord/register-commands.ts",
+
+    "migrate:dev":    "NODE_ENV=development tsx src/infrastructure/database/postgres/migrate.ts",
+    "migrate:prod":   "NODE_ENV=production tsx src/infrastructure/database/postgres/migrate.ts",
 
     "tmp":      "NODE_ENV=development tsx tmp/tmp.ts"
   },
