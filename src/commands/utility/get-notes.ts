@@ -21,7 +21,7 @@ function formatNotes(notes: Note[]): string[] {
 	if (notes.length === 0) {
 		throw new Error("You have no notes.");
 	}
-	return notes.map(note => `- ${note.content} (ID: ${note.id})`);
+	return notes.map(note => `- (${formatDate(note.createdAt)}) ${note.content} (ID: ${note.id})`);
 }
 
 const command: Command = {
@@ -38,7 +38,7 @@ const command: Command = {
 		if (notes.length === 0) {
 			await interaction.reply({
 				content: "You have no notes.",
-				flags: MessageFlags.Ephemeral
+				// flags: MessageFlags.Ephemeral
 			});
 			return;
 		}
@@ -48,7 +48,7 @@ const command: Command = {
 
 		await interaction.reply({
 			content: `Your notes:\n${formattedNotes.join("\n")}`,
-			flags: MessageFlags.Ephemeral
+			// flags: MessageFlags.Ephemeral
 		});
 	},
 }
