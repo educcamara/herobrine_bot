@@ -1,6 +1,7 @@
 import { ChatInputCommandInteraction, Collection } from "discord.js";
 import { loadCommands } from "../../infrastructure/discord/load-commands.js";
 import { Command } from "../../domain/commands/Command.js";
+import logger from "../../infrastructure/logging/logger.js";
 
 export default class CommandHandler {
 	private commands = new Collection<string, Command>();
@@ -27,7 +28,7 @@ export default class CommandHandler {
 		const command = this.get(interaction.commandName);
 
 		if (!command) {
-			console.error(`No command found for ${interaction.commandName}`);
+			logger.error(`No command found for ${interaction.commandName}`);
 			throw new Error(`Command not found: ${interaction.commandName}`);
 		}
 
