@@ -1,20 +1,39 @@
-import { config } from 'dotenv';
-import path from 'path';
+import { config } from "dotenv";
+import path from "path";
 
-const env = process.env.NODE_ENV || 'development';
+const env = process.env.NODE_ENV || "development";
 
-config(
-	{ path: path.resolve(process.cwd(), `.env.${env}`) }
-)
+config({
+	path: path.resolve(process.cwd(), `.env.${env}`)
+});
 
-export default {
+function requireEnv(name: string): string {
+	const value = process.env[name];
+	if (!value) {
+		throw new Error(`Missing environment variable: ${name}`);
+	}
+	return value;
+}
+
+const configObject = {
 	nodeEnv: env,
+
 	db: {
-		host: 		process.env.DB_HOST,
-		port: 		Number(process.env.DB_PORT),
-		name: 		process.env.DB_NAME,
-		user: 		process.env.DB_USER,
-		password: 	process.env.DB_PASSWORD,
-		ssl: 		process.env.DB_SSL === 'true',
+		host: requireEnv("DB_HOST"),
+		port: Number(requireEnv("DB_PORT")),
+		name: requireEnv("DB_NAME"),
+		user: requireEnv("DB_USER"),
+		password: requireEnv("DB_PASSWORD"),
+		ssl: process.env.DB_SSL === "true"
+			? { rejectUnauthorized: false }
+			: false
 	},
+
+	discord: {
+		token: requireEnv("DISCORD_TOKEN"),
+		clientId: requireEnv("CLIENT_ID"),
+		guildId: process.env.GUILD_ID
+	}
 };
+
+export default configObject;
